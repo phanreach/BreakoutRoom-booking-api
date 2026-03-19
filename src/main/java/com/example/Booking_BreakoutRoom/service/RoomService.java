@@ -29,8 +29,7 @@ public class RoomService {
     public RoomService(
             RoomRepository roomRepository,
             RoomImageRepository roomImageRepository,
-            FileStorageService fileStorageService
-    ){
+            FileStorageService fileStorageService) {
         this.roomImageRepository = roomImageRepository;
         this.roomRepository = roomRepository;
         this.fileStorageService = fileStorageService;
@@ -48,8 +47,9 @@ public class RoomService {
 
         return mapToResponse(room);
     }
+
     @Transactional
-    public RoomResponse createRoom(RoomRequest request){
+    public RoomResponse createRoom(RoomRequest request) {
         Room room = new Room();
         room.setName(request.getName());
         room.setFloor(request.getFloor());
@@ -62,7 +62,7 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomResponse updateRoom(Long id, RoomRequest request){
+    public RoomResponse updateRoom(Long id, RoomRequest request) {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Room not found"));
 
@@ -76,22 +76,20 @@ public class RoomService {
         return mapToResponse(savedRoom);
     }
 
-
     @Transactional
     public RoomResponse deleteRoom(Long id) {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Room not found"));
 
         if (room.getImages() != null) {
-            room.getImages().forEach(img ->
-                    fileStorageService.delete(img.getImageUrl())
-            );
+            room.getImages().forEach(img -> fileStorageService.delete(img.getImageUrl()));
         }
 
         roomRepository.delete(room);
 
         return mapToResponse(room);
     }
+
     @Transactional
     public List<RoomImage> uploadRoomImages(Long roomId, List<MultipartFile> images) {
 
@@ -115,7 +113,51 @@ public class RoomService {
         return uploaded;
     }
 
-    private RoomResponse mapToResponse(Room room){
+    @Transactional
+    public void deleteRoomImage(Long imageId) {
+        RoomImage image = roomImageRepository.findById(imageId)
+                .orElseThrow(() -> new RuntimeException("Image not found"));
+
+        fileStorageService.delete(image.getImageUrl());
+
+        if (image.getRoom() != null && image.getRoom().getImages() != null) {
+            image.getRoom().getImages().removeIf(img -> img.getId().equals(imageId));
+            roomRepository.save(image.getRoom());
+        }
+    }
+
+    @Transactional
+    public List<RoomImage> updateRoomImages(Long roomId, List<MultipartFile> newImages) {
+
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Room not found"));
+
+        if (room.getImages() == null) {
+            room.setImages(new ArrayList<>());
+        }
+
+        if (!room.getImages().isEmpty()) {
+            List<RoomImage> existingImages = new ArrayList<>(room.getImages());
+            existingImages.forEach(img -> fileStorageService.delete(img.getImageUrl()));
+            roomImageRepository.deleteAll(existingImages);
+            room.getImages().clear();
+        }
+
+        for (MultipartFile file : newImages) {
+            String path = fileStorageService.save(file);
+
+            RoomImage img = new RoomImage();
+            img.setImageUrl(path);
+            img.setRoom(room);
+
+            room.getImages().add(img);
+        }
+
+        Room savedRoom = roomRepository.save(room);
+        return savedRoom.getImages();
+    }
+
+    private RoomResponse mapToResponse(Room room) {
         RoomResponse response = new RoomResponse();
         response.setId(room.getId());
         response.setName(room.getName());
@@ -125,7 +167,7 @@ public class RoomService {
         response.setDescription(room.getDescription());
 
         List<String> images = new ArrayList<>();
-        if(room.getImages() != null){
+        if (room.getImages() != null) {
             room.getImages().forEach(img -> images.add(baseUrl + img.getImageUrl()));
         }
         response.setImages(images);

@@ -78,4 +78,31 @@ public class RoomController {
 
         return ResponseEntity.ok(new ApiResponse<>("Images uploaded successfully", uploadedUrls));
     }
+
+    @DeleteMapping("/images/{imageId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> deleteRoomImage(@PathVariable Long imageId) {
+        roomService.deleteRoomImage(imageId);
+        return ResponseEntity.ok(new ApiResponse<>("Image deleted successfully", null));
+    }
+
+    @PutMapping(
+            value = "/update-images/{roomId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<String>>> updateRoomImages(
+            @PathVariable Long roomId,
+            @RequestPart("images") List<MultipartFile> images
+    ) {
+        List<String> updatedUrls = roomService.updateRoomImages(roomId, images)
+                .stream()
+                .map(img -> img.getImageUrl())
+                .toList();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>("Images updated successfully", updatedUrls)
+        );
+    }
+
 }
