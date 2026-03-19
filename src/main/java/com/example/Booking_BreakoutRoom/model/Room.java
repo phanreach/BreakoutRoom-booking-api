@@ -28,5 +28,8 @@ public class Room {
     private String description;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RoomImage> images;
+    private List<RoomImage> images = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Booking> bookings = new java.util.ArrayList<>();
 }

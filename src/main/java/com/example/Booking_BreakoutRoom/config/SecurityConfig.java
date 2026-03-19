@@ -67,17 +67,22 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html")
                         .permitAll()
-                        .requestMatchers("/uploads/**").permitAll()
+
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/bookings").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/bookings").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/bookings/me").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/bookings").authenticated()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/api/rooms/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/rooms/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/booking/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/booking/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/booking/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/booking/**").authenticated()
+
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         .anyRequest().authenticated()
                 );
         return http.build();
@@ -88,7 +93,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
                 "http://localhost:3000",
-                "http://localhost:5173"
+                "http://localhost:5173",
+                "http://localhost:5174"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
