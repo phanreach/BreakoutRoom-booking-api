@@ -2,7 +2,6 @@ package com.example.Booking_BreakoutRoom.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,17 +21,23 @@ public class JwtService {
         return Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
     }
 
-    // Generate JWT using username (email)
     public String generateToken(String username) {
+        return generateToken(username, jwtProperties.getExpiration());
+    }
+
+    public String generateRefreshToken(String username) {
+        return generateToken(username, jwtProperties.getRefreshExpiration());
+    }
+
+    private String generateToken(String username, long expiration) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
                 .compact();
     }
 
-    // Extract username from token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -46,12 +51,10 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    // Check if token is expired
     private boolean isTokenExpired(String token) {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
-    // Validate token
     public boolean isTokenValid(String token, String username) {
         final String tokenUsername = extractUsername(token);
         return (tokenUsername.equals(username)) && !isTokenExpired(token);

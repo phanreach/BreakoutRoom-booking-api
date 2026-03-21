@@ -2,6 +2,7 @@ package com.example.Booking_BreakoutRoom.auth;
 
 import com.example.Booking_BreakoutRoom.auth.dto.AuthResponse;
 import com.example.Booking_BreakoutRoom.auth.dto.LoginRequest;
+import com.example.Booking_BreakoutRoom.auth.dto.RefreshTokenRequest;
 import com.example.Booking_BreakoutRoom.auth.dto.RegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,12 @@ public class AuthController {
     @Operation(summary = "User Login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "Refresh access token")
+    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(authService.refreshToken(request));
     }
 }
 

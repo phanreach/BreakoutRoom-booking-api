@@ -17,4 +17,6 @@ public class AuthResponse {
     private String phone;
     private EnumRole role;
     private String token;
+    private String accessToken;
+    private String refreshToken;
 }

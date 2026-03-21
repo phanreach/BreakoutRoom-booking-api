@@ -2,6 +2,7 @@ package com.example.Booking_BreakoutRoom.auth;
 
 import com.example.Booking_BreakoutRoom.auth.dto.AuthResponse;
 import com.example.Booking_BreakoutRoom.auth.dto.LoginRequest;
+import com.example.Booking_BreakoutRoom.auth.dto.RefreshTokenRequest;
 import com.example.Booking_BreakoutRoom.auth.dto.RegisterRequest;
 import com.example.Booking_BreakoutRoom.enumeration.EnumRole;
 import com.example.Booking_BreakoutRoom.model.User;
@@ -55,14 +56,37 @@ public class AuthService {
 
     }
 
+    public AuthResponse refreshToken(RefreshTokenRequest request) {
+        String refreshToken = request.getRefreshToken();
+
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new RuntimeException("Refresh token is required");
+        }
+
+        String email = jwtService.extractUsername(refreshToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!jwtService.isTokenValid(refreshToken, user.getEmail())) {
+            throw new RuntimeException("Refresh token is not valid");
+        }
+
+        return generateAuthResponse(user);
+    }
+
     private AuthResponse generateAuthResponse(User user) {
+        String accessToken = jwtService.generateToken(user.getEmail());
+        String refreshToken = jwtService.generateRefreshToken(user.getEmail());
+
         return AuthResponse.builder()
                 .id(user.getId())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .role(user.getRole())
-                .token(jwtService.generateToken(user.getEmail()))
+                .token(accessToken)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 }
