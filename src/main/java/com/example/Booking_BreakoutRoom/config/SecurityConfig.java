@@ -96,7 +96,9 @@ public class SecurityConfig {
                 "http://localhost:5173",
                 "http://localhost:5174",
                 "https://31d38dee.breakout-room.pages.dev",
-                "https://breakout-room.pages.dev"
+                "https://breakout-room.pages.dev",
+                "https://breakoutroom.cloud",
+                "https://www.breakoutroom.cloud"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
