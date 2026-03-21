@@ -35,6 +35,8 @@ public class User {
     @Column(nullable = false)
     private EnumRole role = EnumRole.USER;
 
+    @Column(nullable = false)
+    private boolean enabled = true;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings = new ArrayList<>();

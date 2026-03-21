@@ -34,6 +34,7 @@ public class AuthService {
         user.setPhone(request.getPhone());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(EnumRole.USER);
+        user.setEnabled(true);
 
         userRepository.save(user);
 
@@ -52,6 +53,10 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (!user.isEnabled()) {
+            throw new RuntimeException("User account is disabled");
+        }
+
         return generateAuthResponse(user);
 
     }
@@ -66,6 +71,10 @@ public class AuthService {
         String email = jwtService.extractUsername(refreshToken);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.isEnabled()) {
+            throw new RuntimeException("User account is disabled");
+        }
 
         if (!jwtService.isTokenValid(refreshToken, user.getEmail())) {
             throw new RuntimeException("Refresh token is not valid");
