@@ -31,3 +31,26 @@ The Breakout Room Booking System is a web-based app designed to allows students 
 - Swagger
 ---
 
+# 🚀 Backend Deployment Guide  
+## Breakout Room Booking API (Docker + Nginx + DigitalOcean)
+
+This guide explains how to deploy the **Breakout Room Booking API** on a **DigitalOcean server** using **Docker** and **Nginx as a reverse proxy**, with optional SSL via Cloudflare.
+
+---
+
+## 📌 Overview
+
+Deployment architecture:
+
+```text
+Client (Browser / Mobile)
+        ↓
+Cloudflare (DNS + SSL)
+        ↓
+DigitalOcean Droplet
+        ↓
+Nginx (Reverse Proxy)
+        ↓
+Docker Container (Spring Boot API)
+        ↓
+PostgreSQL (Docker / External DB)
