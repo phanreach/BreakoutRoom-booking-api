@@ -6,10 +6,10 @@ The Breakout Room Booking System is a web-based app designed to allows students 
 ## 🚀 Features
 
 - 🔐 User authentication (JWT)
-  . JWT-based authentication
-  . Secure login & registration
-  . Role-based access control (Admin/User)
-  . Password encryption using BCrypt
+  * JWT-based authentication
+  * Secure login & registration
+  * Role-based access control (Admin/User)
+  * Password encryption using BCrypt
 - 🏠 Room booking management
 - 📅 Booking history tracking
 - 👤 User Management
