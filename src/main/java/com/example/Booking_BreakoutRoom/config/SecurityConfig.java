@@ -92,9 +92,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
+                "http://localhost:8080",
                 "http://localhost:3000",
                 "http://localhost:5173",
                 "http://localhost:5174",
+                "https://api.breakoutroom.cloud",
                 "https://31d38dee.breakout-room.pages.dev",
                 "https://breakout-room.pages.dev",
                 "https://breakoutroom.cloud",
