@@ -26,7 +26,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/breakout-room
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
-      APP_BASE_URL: http://138.197.45.40:8080
+      APP_BASE_URL: https://www.breakoutroom.cloud
     depends_on:
       db:
         condition: service_healthy
